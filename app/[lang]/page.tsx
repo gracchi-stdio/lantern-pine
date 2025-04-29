@@ -1,6 +1,12 @@
 import Image from "next/image";
 
-export default function Home() {
+// Define the props type including params
+type HomePageProps = {
+  params: { lang: string };
+};
+
+// Accept params in the function signature
+export default async function Home({ params }: Readonly<HomePageProps>) {
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
@@ -16,7 +22,8 @@ export default function Home() {
           <li className="mb-2 tracking-[-.01em]">
             Get started by editing{" "}
             <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
+              {/* Update path shown to user */}
+              app/[lang]/page.tsx
             </code>
             .
           </li>
@@ -38,6 +45,7 @@ export default function Home() {
               alt="Vercel logomark"
               width={20}
               height={20}
+              style={{ height: 'auto' }} // Add style to maintain aspect ratio
             />
             Deploy now
           </a>
