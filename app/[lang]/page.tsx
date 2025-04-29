@@ -1,15 +1,28 @@
+import { db } from "@/lib/db/drizzle";
+import { episodes } from "@/lib/db/schema";
+import { getDictionary } from "@/lib/utils";
+import { desc } from "drizzle-orm";
 import Image from "next/image";
 
 // Define the props type including params
 type HomePageProps = {
-  params: { lang: string };
+  params: { lang: "fa" | "en" };
 };
 
 // Accept params in the function signature
 export default async function Home({ params }: Readonly<HomePageProps>) {
+  const { lang } = await params;
+  const dict = await getDictionary(lang);
+  const upcoming = await db.query.episodes.findMany({
+    with: {
+      topic: true,
+    },
+    orderBy: desc(episodes.createdAt),
+  });
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+        {dict.products.cart}
         <Image
           className="dark:invert"
           src="/next.svg"
@@ -45,7 +58,7 @@ export default async function Home({ params }: Readonly<HomePageProps>) {
               alt="Vercel logomark"
               width={20}
               height={20}
-              style={{ height: 'auto' }} // Add style to maintain aspect ratio
+              style={{ height: "auto" }} // Add style to maintain aspect ratio
             />
             Deploy now
           </a>

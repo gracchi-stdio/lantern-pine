@@ -2,9 +2,31 @@
 import { getCurrentSession } from "@/lib/db/session";
 import { redirect } from "next/navigation";
 import React from "react";
+import { Inter } from "next/font/google";
+import { Metadata } from "next";
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+import AdminSidebarNav from "@/components/admin/admin-sidebar-nav";
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" }); // Basic font setup for shadcn
+import "../globals.css";
+export const metadata: Metadata = {
+  title: "Admin Dashboard",
+  description: "Showcasing frontend and automation expertise",
+};
 
-// Basic layout for the admin section
-// You might want to add admin-specific navigation, headers, etc. here
+// Define the navigation items for the sidebar
+const sidebarNavItems = [
+  {
+    title: "Dashboard",
+    href: "/admin",
+  },
+  {
+    title: "Episodes",
+    href: "/admin/episodes",
+  },
+  // Add other admin sections here later
+];
+
 export default async function AdminLayout({
   children,
 }: {
@@ -15,11 +37,30 @@ export default async function AdminLayout({
     return redirect("/en/login");
   }
   return (
-    <html>
-      <body>
-        <div className="admin-section">
-          {/* Example: Add an admin header or sidebar here later */}
-          <main className="p-4">{children}</main>
+    <html lang="en" suppressHydrationWarning>
+      <head />
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          inter.variable,
+        )}
+      >
+        <div className="space-y-6 p-4 md:p-10 pb-16 block">
+          <div className="space-y-0.5">
+            <h2 className="text-2xl font-bold tracking-tight">Admin Panel</h2>
+            <p className="text-muted-foreground">
+              Manage your website content and settings.
+            </p>
+          </div>
+          <Separator className="my-6" />
+          <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
+            <aside className="-px-4 lg:w-1/5">
+              <AdminSidebarNav items={sidebarNavItems} />
+            </aside>
+            <div className="flex-1 lg:max-w-none">
+              {children} {/* Page content will be rendered here */}
+            </div>
+          </div>
         </div>
       </body>
     </html>
