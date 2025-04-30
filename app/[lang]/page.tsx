@@ -1,8 +1,11 @@
-import { db } from "@/lib/db/drizzle";
-import { episodes } from "@/lib/db/schema";
+import { Button } from "@/components/ui/button";
+
+
 import { getDictionary } from "@/lib/utils";
-import { desc } from "drizzle-orm";
+
 import Image from "next/image";
+import { logout } from "@/lib/actions";
+import { getCurrentSession } from "@/lib/db/session";
 
 // Define the props type including params
 type HomePageProps = {
@@ -13,16 +16,13 @@ type HomePageProps = {
 export default async function Home({ params }: Readonly<HomePageProps>) {
   const { lang } = await params;
   const dict = await getDictionary(lang);
-  const upcoming = await db.query.episodes.findMany({
-    with: {
-      topic: true,
-    },
-    orderBy: desc(episodes.createdAt),
-  });
+  const { user } = await getCurrentSession();
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         {dict.products.cart}
+        {!!user && <Button onClick={logout}>Logout</Button>}
         <Image
           className="dark:invert"
           src="/next.svg"

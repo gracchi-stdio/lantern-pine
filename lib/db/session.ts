@@ -9,6 +9,7 @@ import { eq } from "drizzle-orm";
 import { env } from "@/env.mjs";
 import { cookies } from "next/headers";
 import { cache } from "react";
+
 export type SessionValidationResult =
   | { user: User; session: Session }
   | { user: null; session: null };

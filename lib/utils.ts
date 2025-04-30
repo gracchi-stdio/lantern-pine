@@ -13,7 +13,9 @@ export function getLangDir(lang: string): "ltr" | "rtl" {
 export const settings = {
   admin: {
     dashboard: "/admin",
+    githubUsers: ["gracchi-stdio"],
   },
+  logoutRedirect: "/",
 };
 
 const dictionaries = {

@@ -4,11 +4,13 @@ import { redirect } from "next/navigation";
 import React from "react";
 import { Inter } from "next/font/google";
 import { Metadata } from "next";
-import { cn } from "@/lib/utils";
+import { cn, settings } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import AdminSidebarNav from "@/components/admin/admin-sidebar-nav";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" }); // Basic font setup for shadcn
 import "../globals.css";
+import { Button } from "@/components/ui/button";
+import { logout } from "@/lib/actions";
 export const metadata: Metadata = {
   title: "Admin Dashboard",
   description: "Showcasing frontend and automation expertise",
@@ -22,8 +24,12 @@ const sidebarNavItems = [
   },
   {
     title: "Episodes",
-    href: "/admin/episodes",
   },
+  {
+    title: "Create",
+    href: "/admin/episodes/create",
+  },
+
   // Add other admin sections here later
 ];
 
@@ -36,6 +42,9 @@ export default async function AdminLayout({
   if (!user) {
     return redirect("/en/login");
   }
+  if (!settings.admin.githubUsers.includes(user.username)) {
+    return redirect("/en/unauth");
+  }
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
@@ -46,11 +55,14 @@ export default async function AdminLayout({
         )}
       >
         <div className="space-y-6 p-4 md:p-10 pb-16 block">
-          <div className="space-y-0.5">
-            <h2 className="text-2xl font-bold tracking-tight">Admin Panel</h2>
-            <p className="text-muted-foreground">
-              Manage your website content and settings.
-            </p>
+          <div className="space-y-0.5 flex justify-between">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">Admin Panel</h2>
+              <p className="text-muted-foreground">
+                Manage your website content and settings.
+              </p>
+            </div>
+            <Button onClick={logout}>Logout</Button>
           </div>
           <Separator className="my-6" />
           <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">

@@ -27,26 +27,33 @@ export const sessions = sqliteTable("sessions", {
 // --- Episode tables ---
 export const topics = sqliteTable("topics", {
   id: integer("id").primaryKey({ autoIncrement: true }),
-  title: text("title").notNull(),
+  titleFa: text("titleFa").notNull().unique(),
+  titleEn: text("titleEn").notNull().unique(),
 });
 export const episodes = sqliteTable("episodes", {
   id: integer("id").primaryKey({ autoIncrement: true }),
-  status: text("status", { enum: ["upcoming", "published"] })
+  status: text("status", { enum: ["upcoming", "published", "archived"] })
     .default("upcoming")
     .notNull(),
-  slug: text("slug").unique(),
+  slug: text("slug").unique().notNull(),
   scheduledAt: integer("scheduled_at", { mode: "timestamp" }),
   contentName: text("content_name").notNull(), // this is the name of md file under repo's episodes folder
-  topicId: integer("topic_id").references(() => topics.id),
+  resourcesUrl: text("resources_url"),
   createdAt: integer("created_at", { mode: "timestamp_ms" })
     .default(sql`(unixepoch('subsec') * 1000)`)
     .notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp_ms" }).$onUpdate(
     () => new Date(),
   ),
+
+  topicId: integer("topic_id").references(() => topics.id),
+
   // synced from repo
   audioUrl: text("audioUrl"),
-  title: text("title"), // the title field must structured as object {en: "english title", ...} locale as key
+  titleEn: text("title_en"),
+  titleFa: text("title_fa"),
+  descriptionEn: text("title_en"),
+  descriptionFa: text("title_fa"),
   publishedAt: integer("publishedAt", { mode: "timestamp_ms" }),
 
   // SEO/UI tbd
