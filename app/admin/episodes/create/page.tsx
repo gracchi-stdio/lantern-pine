@@ -9,14 +9,8 @@ export default async function CreateEpisodePage() {
   // Fetch topics from the database
   const availableTopics = await db.select().from(topics);
 
-  // Map topics to the format expected by the form
-  const formTopics = availableTopics.map((topic) => ({
-    id: topic.id,
-    title: topic.titleEn, // Using titleEn for the form
-  }));
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 h-full">
       <div>
         <h3 className="text-lg font-medium">Create New Episode</h3>
         <p className="text-sm text-muted-foreground">
@@ -24,7 +18,7 @@ export default async function CreateEpisodePage() {
         </p>
       </div>
       {/* You might add a Separator here if needed */}
-      <CreateEpisodeForm topics={formTopics} action={createEpisode} />
+      <CreateEpisodeForm topics={availableTopics} action={createEpisode} />
     </div>
   );
 }

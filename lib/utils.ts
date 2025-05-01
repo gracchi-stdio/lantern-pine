@@ -16,6 +16,7 @@ export const settings = {
     githubUsers: ["gracchi-stdio"],
   },
   logoutRedirect: "/",
+  contentRepo: "gracchi-stdio/latern-pine-content",
 };
 
 const dictionaries = {

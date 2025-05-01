@@ -19,4 +19,9 @@ export const createEpisodeSchema = z.object({
     .min(1, "Content name is required")
     .regex(/^[a-zA-Z0-9_.-]+\.md$/, "Content name must be a valid MD filename"),
   topicId: z.string().optional(),
+  // Add new fields for title and description
+  titleEn: z.string().min(4, "Title is required"), // Assuming title is mandatory
+  titleFa: z.string().min(4, "Farsi Title is required"), // Assuming title is mandatory
+  descriptionEn: z.string().max(1000, "English Description is too long").optional().or(z.literal("")),
+  descriptionFa: z.string().max(1000, "Farsi Description is too long").optional().or(z.literal("")),
 });

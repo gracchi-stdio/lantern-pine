@@ -3,8 +3,8 @@
 import { z } from "zod";
 import { getCurrentSession } from "../db/session";
 
+import { topics, type NewTopic, episodes, type NewEpisode } from "../db/schema";
 import { settings } from "../utils";
-import { episodes, NewEpisode } from "../db/schema";
 import { revalidatePath } from "next/cache";
 import { db } from "../db/drizzle";
 import { redirect } from "next/navigation";
@@ -12,10 +12,7 @@ import { createEpisodeSchema as baseEpisodeSchema } from "../validations/episode
 
 const createEpisodeSchema = baseEpisodeSchema.extend({
   slug: z.string().transform((slug) => slug.toLowerCase()),
-  topicId: z
-    .string()
-    .transform((val) => (val ? parseInt(val, 10) : null))
-    .nullable(),
+  topicId: z.string().nullable(),
 });
 
 export async function createEpisode(
@@ -37,6 +34,10 @@ export async function createEpisode(
     resourcesUrl: formData.get("resourcesUrl") || "", // Corrected key
     contentName: formData.get("contentName"),
     topicId: formData.get("topicId"),
+    titleEn: formData.get("titleEn"),
+    titleFa: formData.get("titleFa"),
+    descriptionEn: formData.get("descriptionEn") || "",
+    descriptionFa: formData.get("descriptionFa") || "",
   };
 
   const parsedData = {
@@ -59,7 +60,7 @@ export async function createEpisode(
     };
   }
 
-  const { slug, scheduledAt, resourcesUrl, contentName, topicId } =
+  const { slug, scheduledAt, resourcesUrl, contentName, topicId, titleEn, titleFa, descriptionEn, descriptionFa } =
     validatedFields.data;
 
   // --- prepare the new Episode ---
@@ -69,6 +70,10 @@ export async function createEpisode(
     resourcesUrl,
     contentName,
     topicId,
+    titleEn,
+    titleFa,
+    descriptionEn,
+    descriptionFa,
     status: "upcoming",
   };
 
@@ -97,4 +102,74 @@ export async function createEpisode(
 
   revalidatePath("/admin");
   return redirect("/admin");
+}
+
+// --- create a new Topic ---
+
+const createTopicSchema = z.object({
+  titleEn: z.string().min(4).max(100), // Changed min length to 1
+  titleFa: z.string().min(4).max(100), // Changed min length to 1
+});
+
+export async function createTopic(
+  prevState: unknown,
+  formData: FormData,
+): Promise<
+  | {
+      errors?: Record<string, string[] | undefined>;
+      message?: string;
+    }
+  | NewTopic
+> {
+  // --- Authenticate ---
+  const { user } = await getCurrentSession();
+  if (!user || !settings.admin.githubUsers.includes(user?.username)) {
+    return { message: "unauthorized" };
+  }
+
+  const rawFormData = {
+    titleEn: formData.get("titleEn"),
+    titleFa: formData.get("titleFa"),
+  };
+
+  // --- validate data ---
+  const validatedFields = createTopicSchema.safeParse(rawFormData);
+  if (!validatedFields.success || !validatedFields?.data) {
+    console.error(
+      "Topic Validation Errors",
+      validatedFields.error.flatten().fieldErrors,
+    );
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Topic validation failed.",
+    };
+  }
+
+  const { titleEn, titleFa } = validatedFields.data;
+
+  // --- prepare the new Topic ---
+  const newTopicId = crypto.randomUUID();
+  const newTopic: NewTopic = {
+    id: newTopicId,
+    titleEn,
+    titleFa,
+  };
+
+  // --- DB transactions ---
+  try {
+    await db.insert(topics).values(newTopic);
+  } catch (error) {
+    console.error("Database Error: ", error);
+    return {
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unknown database error occurred during topic creation",
+    };
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/episodes/create");
+  // Return the created topic data upon success
+  return newTopic;
 }

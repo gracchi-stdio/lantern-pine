@@ -11,7 +11,9 @@ const defaultLocale = "fa";
 function getLocale(request: NextRequest): string {
   const negotiatorHeaders: Record<string, string> = {};
   request.headers.forEach((value, key) => (negotiatorHeaders[key] = value));
-  const languages = new Negotiator({ headers: negotiatorHeaders }).languages(locales);
+  const languages = new Negotiator({ headers: negotiatorHeaders }).languages(
+    locales,
+  );
   try {
     return match(languages, locales, defaultLocale);
   } catch (e) {
@@ -20,17 +22,18 @@ function getLocale(request: NextRequest): string {
   }
 }
 
-
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   console.log(`Middleware processing path: ${pathname}`);
 
   // --- Skip checks for specific prefixes and static files ---
   if (
-    pathname.startsWith('/admin') || // ADD THIS: Skip /admin routes
-    pathname.includes('.') // Skip static files (heuristic)
+    pathname.startsWith("/admin") || // ADD THIS: Skip /admin routes
+    pathname.includes(".") // Skip static files (heuristic)
   ) {
-    console.log(` -> Path is /admin or contains '.', skipping locale handling.`);
+    console.log(
+      ` -> Path is /admin or contains '.', skipping locale handling.`,
+    );
     return undefined; // Allow the request to proceed without locale handling
   }
   // -------------------------------------------------------
@@ -48,12 +51,12 @@ export function middleware(request: NextRequest) {
   }
 
   console.log(` -> Path already has locale, proceeding.`);
-  return undefined;
+  const headers = new Headers(request.headers);
+  headers.set("x-pathname", request.nextUrl.pathname);
+  return NextResponse.next({ headers });
 }
 
 // Matcher remains the same for now
 export const config = {
-  matcher: [
-    '/((?!api|admin|_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: ["/((?!api|admin|_next/static|_next/image|favicon.ico).*)"],
 };

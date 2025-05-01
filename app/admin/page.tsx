@@ -1,23 +1,18 @@
-// app/admin/page.tsx
-import { buttonVariants } from "@/components/ui/button";
-import Link from "next/link";
 import React from "react";
+import { episodes } from "@/lib/db/schema";
+import { db } from "@/lib/db/drizzle";
+import EpisodesTable from "@/components/admin/episodes-table";
 
 // Basic Admin Dashboard Page
-export default function AdminDashboardPage() {
-  return (
-    <div>
-      <h1>Admin Dashboard</h1>
-      <p>Welcome to the admin area.</p>
+export default async function AdminDashboardPage() {
+  const allEpisodes = await db.select().from(episodes);
 
-      <div className="py-4">
-        <Link
-          className={buttonVariants({ variant: "outline" })}
-          href="/admin/episodes/create"
-        >
-          Enter a New Episode
-        </Link>
-      </div>
+  return (
+    <div className="space-y-4">
+      <h1>Admin Dashboard</h1>
+
+      {/* Episodes Table */}
+      <EpisodesTable allEpisodes={allEpisodes} />
     </div>
   );
 }

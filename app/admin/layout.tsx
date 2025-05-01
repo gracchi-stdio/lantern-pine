@@ -69,7 +69,7 @@ export default async function AdminLayout({
             <aside className="-px-4 lg:w-1/5">
               <AdminSidebarNav items={sidebarNavItems} />
             </aside>
-            <div className="flex-1 lg:max-w-none">
+            <div className="flex-1 lg:max-w-none h-full">
               {children} {/* Page content will be rendered here */}
             </div>
           </div>

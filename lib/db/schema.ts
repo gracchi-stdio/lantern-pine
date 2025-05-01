@@ -26,7 +26,7 @@ export const sessions = sqliteTable("sessions", {
 
 // --- Episode tables ---
 export const topics = sqliteTable("topics", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+  id: text("id").primaryKey(),
   titleFa: text("titleFa").notNull().unique(),
   titleEn: text("titleEn").notNull().unique(),
 });
@@ -46,15 +46,15 @@ export const episodes = sqliteTable("episodes", {
     () => new Date(),
   ),
 
-  topicId: integer("topic_id").references(() => topics.id),
+  topicId: text("topic_id").references(() => topics.id),
 
   // synced from repo
-  audioUrl: text("audioUrl"),
+  audioUrl: text("audio_url"),
   titleEn: text("title_en"),
   titleFa: text("title_fa"),
-  descriptionEn: text("title_en"),
-  descriptionFa: text("title_fa"),
-  publishedAt: integer("publishedAt", { mode: "timestamp_ms" }),
+  descriptionEn: text("description_en"),
+  descriptionFa: text("description_fa"),
+  publishedAt: integer("published_at", { mode: "timestamp_ms" }),
 
   // SEO/UI tbd
 });
@@ -77,6 +77,9 @@ export const topicRelations = relations(topics, ({ many }) => ({
 // Types for convenience
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+
+export type Topic = typeof topics.$inferSelect;
+export type NewTopic = typeof topics.$inferInsert;
 
 export type Session = typeof sessions.$inferSelect;
 export type NewSession = typeof sessions.$inferInsert;

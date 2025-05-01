@@ -17,19 +17,26 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { createEpisodeSchema } from "@/lib/validations/episodes";
+import { Separator } from "../ui/separator";
+import { TipTapEditor } from "../admin/tiptap-editor";
+import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import TopicsCombobox from "./topics-combobox";
+import { Topic } from "@/lib/db/schema";
+import { useEffect } from "react";
+type Locale = "fa" | "en";
+import {
+  DEFAULT_LOCALE,
+  LOCALES,
+  DEFAULT_TIMEZONE,
+  timezones,
+} from "@/lib/settings";
+import { TZDate } from "react-day-picker";
+import { ComboboxPopover } from "../ui/combobox-popover";
 
 type CreateEpisodeFormProps = {
-  topics: { id: number; title: string }[];
+  topics: Topic[];
   action: (
     prevState: unknown, // Use unknown instead of any
     formData: FormData,
@@ -39,7 +46,20 @@ type CreateEpisodeFormProps = {
   } | void>; // Specify error type
 };
 
+// Helper function to generate a slug
+const generateSlug = (title: string): string => {
+  if (!title) return "";
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "") // Remove non-alphanumeric characters except spaces and hyphens
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/-+/g, "-") // Replace multiple hyphens with a single hyphen
+    .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+};
+
 export function CreateEpisodeForm({ topics, action }: CreateEpisodeFormProps) {
+  const [locale, setLocale] = useState<Locale>(DEFAULT_LOCALE);
+  const [tz, setTz] = useState<string>(DEFAULT_TIMEZONE);
   const form = useForm<z.infer<typeof createEpisodeSchema>>({
     resolver: zodResolver(createEpisodeSchema),
     defaultValues: {
@@ -47,32 +67,66 @@ export function CreateEpisodeForm({ topics, action }: CreateEpisodeFormProps) {
       resourcesUrl: "",
       contentName: "",
       topicId: "",
+      // Add default values for new fields
+      titleFa: "",
+      descriptionFa: "",
+      titleEn: "",
+      descriptionEn: "",
     },
   });
 
+  // Watch titleEn and update slug
+  const titleEnValue = form.watch("titleEn");
+
+  useEffect(() => {
+    const slug = generateSlug(titleEnValue);
+    form.setValue("slug", slug);
+  }, [titleEnValue, form]); // Depend on titleEnValue and form
+
   const onSubmit = async (values: z.infer<typeof createEpisodeSchema>) => {
     const formData = new FormData();
-    formData.append("slug", values.slug);
-    formData.append("scheduledAt", values.scheduledAt.toISOString());
-    if (values.resourcesUrl)
-      formData.append("resourcesUrl", values.resourcesUrl); // Include resourcesUrl
-    formData.append("contentName", values.contentName);
-    if (values.topicId) formData.append("topicId", values.topicId);
+    const fields = [
+      { key: "slug", value: values.slug },
+      {
+        key: "scheduledAt",
+        value: TZDate.tz(tz, values.scheduledAt),
+      },
+      { key: "resourcesUrl", value: values.resourcesUrl, optional: true },
+      { key: "contentName", value: values.contentName },
+      { key: "topicId", value: values.topicId, optional: true },
+      { key: "titleEn", value: values.titleEn },
+      { key: "descriptionEn", value: values.descriptionEn, optional: true },
+      { key: "titleFa", value: values.titleFa },
+      { key: "descriptionFa", value: values.descriptionFa, optional: true },
+    ];
+
+    for (const { key, value, optional } of fields) {
+      // Append all fields unless they are optional AND empty
+      if (!optional || (optional && value)) {
+        formData.append(key, value as string);
+      }
+    }
 
     const result = await action(undefined, formData);
 
     if (result?.errors) {
       console.error("Server side errors:", result.errors);
-      const errors = result.errors; // Assign to a variable after the check
+      const errors = result.errors;
       Object.keys(errors).forEach((fieldName) => {
-        // Use the new variable 'errors' which is guaranteed to be defined here
-        const message = errors[fieldName]?.[0]; // Safely access the first error message
+        // Skip setting error and focusing for description fields to avoid the TypeError
+        if (fieldName === "descriptionEn" || fieldName === "descriptionFa") {
+          console.warn(
+            `Skipping form.setError for ${fieldName} to avoid focus issue.`,
+          );
+          return;
+        }
+
+        const message = errors[fieldName]?.[0];
         if (message) {
-          // Only set error if a message exists
           form.setError(
             fieldName as keyof z.infer<typeof createEpisodeSchema>,
             {
-              message: message || "", // Provide fallback to satisfy TS
+              message: message || "",
             },
           );
         }
@@ -83,135 +137,237 @@ export function CreateEpisodeForm({ topics, action }: CreateEpisodeFormProps) {
   };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 max-h-full overflow-y-auto"
-      >
-        {/* Slug Field */}
-        <FormField
-          control={form.control}
-          name="slug"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Slug</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., my-first-episode" {...field} />
-              </FormControl>
-              <FormDescription>
-                Unique identifier for the episode URL (lowercase, alphanumeric,
-                hyphens).
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Scheduled Date and Time Field */}
-        <FormField
-          control={form.control}
-          name="scheduledAt"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Scheduled Date and Time</FormLabel>
-              <DateTimePicker hourCycle={12} {...field} />
-
-              <FormDescription>
-                The date and time the episode recording/session is scheduled
-                for.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Resources URL Field (was Signature Reading URL) */}
-        <FormField
-          control={form.control}
-          name="resourcesUrl" // Uses resourcesUrl
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Resources URL</FormLabel> {/* Updated Label */}
-              <FormControl>
-                <Input
-                  placeholder="https://example.com/resources.pdf"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                Optional link to resources for the session.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Content Name Field (for the future MD? file) */}
-        <FormField
-          control={form.control}
-          name="contentName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>MD Content File Name</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="e.g., 2024-08-15-my-episode.md"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                The expected filename for the MD file in the content repository
-                (e.g., including date and slug).
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Topic Select Field */}
-        <FormField
-          control={form.control}
-          name="topicId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Topic</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a topic (optional)" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {topics.length === 0 && (
-                    <SelectGroup>
-                      <SelectLabel>No Topic Yet</SelectLabel>
-                    </SelectGroup>
-                  )}
-                  {topics.map((topic) => (
-                    <SelectItem key={topic.id} value={topic.id.toString()}>
-                      {topic.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormDescription>
-                Optionally associate the episode with a topic.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button
-          className=""
-          type="submit"
-          disabled={form.formState.isSubmitting}
+    <>
+      <ComboboxPopover
+        onSelect={setTz}
+        placeholder={tz}
+        options={timezones.map((timezone) => ({
+          value: timezone,
+          label: timezone,
+        }))}
+      />
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col h-full"
         >
-          {form.formState.isSubmitting
-            ? "Creating..."
-            : "Create Upcoming Episode"}
-        </Button>
-      </form>
-    </Form>
+          <div className="flex-grow overflow-y-auto px-2 space-y-8">
+            {/* Language tabs */}
+            <Tabs
+              defaultValue={locale}
+              onValueChange={(e) => setLocale(e as Locale)}
+            >
+              <TabsList className="mb-4">
+                {LOCALES.map((locale) => (
+                  <TabsTrigger key={locale} value={locale}>
+                    {locale.toUpperCase()}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              <TabsContent className="space-y-4" value="en">
+                {/* English Title */}
+                <FormField
+                  control={form.control}
+                  name="titleEn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>English Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="e.g. A New Session on Capital"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        English title of the episode and required.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* English Description */}
+                <FormField
+                  control={form.control}
+                  name="descriptionEn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>English Description</FormLabel>
+                      <FormControl>
+                        <TipTapEditor
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Optional English description of the episode.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </TabsContent>
+              <TabsContent value="fa">
+                {/* Farsi Title */}
+                <FormField
+                  control={form.control}
+                  name="titleFa"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Farsi Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          dir="rtl"
+                          placeholder="نشت چهارم در مورد کتاب سرمایه"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Farsi title of the episode and required.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* Farsi Description */}
+                <FormField
+                  control={form.control}
+                  name="descriptionFa"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Farsi Description</FormLabel>
+                      <FormControl>
+                        <TipTapEditor
+                          dir="rtl"
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Optional Farsi description of the episode.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </TabsContent>
+            </Tabs>
+
+            {/* Select Topics */}
+            <FormField
+              control={form.control}
+              name="topicId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Topics</FormLabel>
+                  <FormControl>
+                    <TopicsCombobox
+                      topics={topics}
+                      locale={locale}
+                      onChange={field.onChange}
+                      value={field.value || ""}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Select topics related to the episode.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Scheduled Date and Time Field */}
+            <FormField
+              control={form.control}
+              name="scheduledAt"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Scheduled Date and Time</FormLabel>
+                  <DateTimePicker hourCycle={12} {...field} />
+
+                  <FormDescription>
+                    The date and time the episode recording/session is scheduled
+                    for.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Resources URL Field (was Signature Reading URL) */}
+            <FormField
+              control={form.control}
+              name="resourcesUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Resources URL</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="https://example.com/resources.pdf"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Optional link to resources for the session.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Content Name Field (for the future MD? file) */}
+            <FormField
+              control={form.control}
+              name="contentName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>MD Content File Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g., 2024-08-15-my-episode.md"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    The expected filename for the MD file in the content
+                    repository (e.g., including date and slug).
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Slug Field */}
+            <FormField
+              control={form.control}
+              name="slug"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Slug</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., my-first-episode" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Unique identifier for the episode URL (lowercase,
+                    alphanumeric, hyphens).
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="sticky bottom-0 bg-background h-20 flex flex-col space-y-4 items-end mt-4">
+            <Separator />
+            <Button
+              className=""
+              type="submit"
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? "Creating..." : "Create"}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </>
   );
 }

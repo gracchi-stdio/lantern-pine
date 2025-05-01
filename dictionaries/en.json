@@ -1,5 +1,22 @@
 {
-  "products": {
-    "cart": "Add to Cart"
+  "episodes": {
+    "upcoming": "Upcoming Episode",
+    "published": "Published Episodes",
+    "scheduled_time": "Scheduled Time",
+    "add_to_calendar": "Add to Calendar",
+    "remind_me": "Remind Me"
+  },
+
+  "site_name": "Lantern & Pine",
+
+  "home": {
+    "welcome": "Welcome to Fanus vs Kaj",
+    "description": "Join us in our intellectual discourse where we explore the intersection of philosophy, culture, and contemporary thought"
+  },
+  "auth": {
+    "logout": "Sign Out"
+  },
+  "footnote": {
+    "credit": "© {date} Fanus vs Kaj. All rights reserved."
   }
 }

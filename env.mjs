@@ -13,6 +13,8 @@ export const env = createEnv({
     GITHUB_CLIENT_SECRET: z.string().min(1),
     DATABASE_URL: z.string().url().min(1), // Required database connection URL
     DATABASE_AUTH_TOKEN: z.string().min(1).optional(),
+    GITHUB_CONTENT_WEBHOOK_SECRET: z.string().min(1),
+    GITHUB_CONTENT_REPO_PAT: z.string().min(1),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -39,6 +41,8 @@ export const env = createEnv({
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     DATABASE_URL: process.env.DATABASE_URL, // Map DATABASE_URL
     DATABASE_AUTH_TOKEN: process.env.DATABASE_AUTH_TOKEN,
+    GITHUB_CONTENT_WEBHOOK_SECRET: process.env.GITHUB_CONTENT_WEBHOOK_SECRET,
+    GITHUB_CONTENT_REPO_PAT: process.env.GITHUB_CONTENT_REPO_PAT,
     NODE_ENV: process.env.NODE_ENV,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 
