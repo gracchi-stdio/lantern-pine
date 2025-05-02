@@ -3,14 +3,14 @@ import { getEpisodeById } from "@/lib/db/queries";
 import { notFound } from "next/navigation";
 
 interface EpisodePageProps {
-  params: {
+  params: Promise<{
     lang: string;
     episodeId: string;
-  };
+  }>;
 }
 
 export default async function EpisodePage({ params }: EpisodePageProps) {
-  const { lang, episodeId } = params;
+  const { lang, episodeId } = await params;
   const episode = await getEpisodeById(episodeId);
   if (!episode) {
     return notFound();
