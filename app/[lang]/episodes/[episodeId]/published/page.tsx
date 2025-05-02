@@ -10,7 +10,7 @@ interface EpisodePageProps {
 }
 
 export default async function EpisodePage({ params }: EpisodePageProps) {
-  const { lang, episodeId } = await params;
+  const { lang, episodeId } = params;
   const episode = await getEpisodeById(episodeId);
   if (!episode) {
     return notFound();
