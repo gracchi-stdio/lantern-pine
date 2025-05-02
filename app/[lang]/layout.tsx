@@ -4,10 +4,9 @@ import "../globals.css"; // Adjusted import path relative to [lang]
 import { getDictionary, getLangDir } from "@/lib/utils";
 import { getCurrentSession } from "@/lib/db/session";
 import { TZDate } from "react-day-picker";
-import { Locale, LOCALES } from "@/lib/settings";
+import { Locale } from "@/lib/settings";
 import { SiteHeader } from "@/components/site-header";
 import { AudioPlayerLayoutWrapper } from "@/components/audio-player";
-import { headers } from "next/headers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

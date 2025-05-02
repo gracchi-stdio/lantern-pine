@@ -1,4 +1,5 @@
 import { getCurrentSession } from "@/lib/db/session";
+import Link from "next/link";
 
 export default async function Page() {
   const { user } = await getCurrentSession();
@@ -12,7 +13,7 @@ export default async function Page() {
       ) : (
         <div>
           <p>Please log in to continue.</p>
-          <a href="/api/auth/github">Login</a>
+          <Link href="/api/auth/github">Login</Link>
         </div>
       )}
     </>
