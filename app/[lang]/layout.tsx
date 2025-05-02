@@ -40,14 +40,8 @@ export default async function RootLayout({
   const { lang } = resolvedParams;
   const dir = getLangDir(lang);
   const dict = await getDictionary(lang);
-  const pathname = (await headers()).get("x-pathname") || "";
-  const hideHeader = LOCALES.map((locale) => [`/${locale}/login`, `/${locale}`])
-    .flat()
-    .some((path) => pathname.includes(path));
-  const showHeader = !hideHeader;
-  const showFooter = true;
 
-  console.log("s", pathname);
+  const showFooter = true;
 
   const { user } = await getCurrentSession();
   return (
@@ -58,9 +52,9 @@ export default async function RootLayout({
         <AudioPlayerLayoutWrapper>
           <div className="min-h-screen">
             {/* Header Section */}
-            {showHeader && (
-              <SiteHeader isLogged={!!user} dict={dict} lang={lang} />
-            )}
+
+            <SiteHeader isLogged={!!user} dict={dict} lang={lang} />
+
             {children}
             {showFooter && (
               <footer className="container mx-auto px-4 py-6 text-center border-t">
