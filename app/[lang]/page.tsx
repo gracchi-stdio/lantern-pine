@@ -15,7 +15,7 @@ import Link from "next/link";
 
 // Define the props type including params
 type HomePageProps = {
-  params: { lang: "fa" | "en" };
+  params: Promise<{ lang: "fa" | "en" }>;
 };
 
 // Accept params in the function signature

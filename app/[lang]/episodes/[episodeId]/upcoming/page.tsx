@@ -7,16 +7,16 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TZDate } from "react-day-picker";
+import { TZDate } from "@date-fns/tz";
 import { getDictionary } from "@/lib/utils";
 import { getEpisodeById } from "@/lib/db/queries";
 import { CalendarIcon } from "lucide-react";
 
 type Props = {
-  params: {
+  params: Promise<{
     lang: "en" | "fa";
     episodeId: string;
-  };
+  }>;
 };
 
 export default async function UpcomingEpisodePage({ params }: Props) {
