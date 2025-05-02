@@ -48,8 +48,10 @@ export function ComboboxPopover({
   const handleCreate = async () => {
     setIsCreating(true);
     try {
-      const newOption = await onCreateRequest(searchQuery);
-      onSelect(newOption.value);
+      if (onCreateRequest) { // Add this check
+        const newOption = await onCreateRequest(searchQuery);
+        onSelect(newOption.value);
+      }
     } catch (error) {
       console.error(error);
     } finally {
