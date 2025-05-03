@@ -56,11 +56,13 @@ export default async function UpcomingEpisodePage({ params }: Props) {
       <Card className="max-w-3xl mx-auto">
         <CardHeader>
           <CardTitle className="text-3xl font-bold">{localizedTitle}</CardTitle>
-          <CardDescription className="text-lg">
-            <div
-              dangerouslySetInnerHTML={{ __html: localizedDescription }}
-            ></div>
-          </CardDescription>
+          {localizedDescription && (
+            <CardDescription className="text-lg">
+              <div
+                dangerouslySetInnerHTML={{ __html: localizedDescription }}
+              ></div>
+            </CardDescription>
+          )}
         </CardHeader>
 
         <CardContent className="space-y-4">

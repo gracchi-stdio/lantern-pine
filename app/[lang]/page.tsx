@@ -71,9 +71,9 @@ export default async function Home({ params }: Readonly<HomePageProps>) {
                         className="text-sm text-muted-foreground line-clamp-3 min-h-[4.75rem]"
                         dangerouslySetInnerHTML={{
                           __html:
-                            lang === "en"
+                            (lang === "en"
                               ? episode.descriptionEn
-                              : episode.descriptionFa,
+                              : episode.descriptionFa) || "<p></p>",
                         }}
                       ></div>
                     </CardContent>
@@ -105,9 +105,9 @@ export default async function Home({ params }: Readonly<HomePageProps>) {
                         className="text-sm text-muted-foreground line-clamp-3 min-h-[4.75rem]"
                         dangerouslySetInnerHTML={{
                           __html:
-                            lang === "en"
+                            (lang === "en"
                               ? episode.descriptionEn
-                              : episode.descriptionFa,
+                              : episode.descriptionFa) || "<p></p>",
                         }}
                       ></div>
                     </CardContent>
