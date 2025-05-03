@@ -37,13 +37,13 @@ export default async function Home({ params }: Readonly<HomePageProps>) {
       <section className="text-center space-y-4 py-8 flex flex-col">
         <Image
           className="dark:invert mx-auto"
-          src="/fanus-kaj.svg"
+          src="/lantern-pine-logo.svg"
           alt="Fanus vs Kaj"
-          width={200}
+          width={100}
           height={40}
           priority
         />
-
+        <h1 className="text-2xl font-black">LANTERN & PINE</h1>
         <p className="text-muted-foreground max-w-[600px] mx-auto">
           {dict.home.description}
         </p>

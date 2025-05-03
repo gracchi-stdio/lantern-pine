@@ -73,7 +73,6 @@ export default async function UpcomingEpisodePage({ params }: Props) {
                   {
                     dateStyle: "full",
                     timeStyle: "short",
-                    timeZone: "Asia/Tehran",
                   },
                 )}
               </p>
