@@ -78,7 +78,8 @@ export default async function UpcomingEpisodePage({ params }: Props) {
                     dateStyle: "full",
                     timeStyle: "short",
                   },
-                )}
+                )}{" "}
+                {dict.time.tehran_time}
               </p>
             </div>
           ) : null}
