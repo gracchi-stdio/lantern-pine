@@ -89,7 +89,7 @@ export function CreateEpisodeForm({ topics, action }: CreateEpisodeFormProps) {
       { key: "slug", value: values.slug },
       {
         key: "scheduledAt",
-        value: TZDate.tz(tz, values.scheduledAt),
+        value: TZDate.tz(tz, values.scheduledAt).toISOString(),
       },
       { key: "resourcesUrl", value: values.resourcesUrl, optional: true },
       { key: "contentName", value: values.contentName },

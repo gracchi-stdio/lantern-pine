@@ -49,7 +49,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AudioPlayerLayoutWrapper>
-          <div className="min-h-screen">
+          <div className="min-h-screen flex flex-col justify-between">
             {/* Header Section */}
 
             <SiteHeader isLogged={!!user} dict={dict} lang={lang} />

@@ -67,11 +67,15 @@ export default async function Home({ params }: Readonly<HomePageProps>) {
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-muted-foreground mt-4 line-clamp-3 min-h-[4.75rem]">
-                        {lang === "en"
-                          ? episode.descriptionEn
-                          : episode.descriptionFa}
-                      </p>
+                      <div
+                        className="text-sm text-muted-foreground line-clamp-3 min-h-[4.75rem]"
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            lang === "en"
+                              ? episode.descriptionEn
+                              : episode.descriptionFa,
+                        }}
+                      ></div>
                     </CardContent>
                   </Card>
                 </Link>
@@ -97,11 +101,15 @@ export default async function Home({ params }: Readonly<HomePageProps>) {
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4.75rem]">
-                        {lang === "en"
-                          ? episode.descriptionEn
-                          : episode.descriptionFa}
-                      </p>
+                      <div
+                        className="text-sm text-muted-foreground line-clamp-3 min-h-[4.75rem]"
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            lang === "en"
+                              ? episode.descriptionEn
+                              : episode.descriptionFa,
+                        }}
+                      ></div>
                     </CardContent>
                   </Card>
                 </Link>

@@ -52,12 +52,14 @@ export default async function UpcomingEpisodePage({ params }: Props) {
   //   window.open(url.toString(), "_blank");
   // };
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 h-full">
       <Card className="max-w-3xl mx-auto">
         <CardHeader>
           <CardTitle className="text-3xl font-bold">{localizedTitle}</CardTitle>
           <CardDescription className="text-lg">
-            {localizedDescription}
+            <div
+              dangerouslySetInnerHTML={{ __html: localizedDescription }}
+            ></div>
           </CardDescription>
         </CardHeader>
 
