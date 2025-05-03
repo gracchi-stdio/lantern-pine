@@ -35,6 +35,7 @@
     "@tiptap/pm": "^2.11.9",
     "@tiptap/react": "^2.11.9",
     "@tiptap/starter-kit": "^2.11.9",
+    "@vercel/analytics": "^1.5.0",
     "arctic": "^3.6.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

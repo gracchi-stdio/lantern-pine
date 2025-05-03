@@ -8,6 +8,8 @@ import { Locale } from "@/lib/settings";
 import { SiteHeader } from "@/components/site-header";
 import { AudioPlayerLayoutWrapper } from "@/components/audio-player";
 import Image from "next/image";
+import { Analytics } from "@vercel/analytics/react";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -86,6 +88,7 @@ export default async function RootLayout({
             )}
           </div>
         </AudioPlayerLayoutWrapper>
+        <Analytics />
       </body>
     </html>
   );
