@@ -31,7 +31,7 @@ export default async function UpcomingEpisodePage({ params }: Props) {
   const dict = await getDictionary(lang);
   const title = (getLocalizedField(episode, "title", lang) as string) || "";
   const descriptionHTML =
-    (getLocalizedField(episode, "title", lang) as string) || "";
+    (getLocalizedField(episode, "description", lang) as string) || "";
 
   const localizedDate = (
     date: Date | null,
