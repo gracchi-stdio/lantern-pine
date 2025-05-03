@@ -12,6 +12,7 @@ import { db } from "@/lib/db/drizzle";
 import { desc } from "drizzle-orm";
 import { Episode, episodes } from "@/lib/db/schema";
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
 // Define the props type including params
 type HomePageProps = {
@@ -47,6 +48,17 @@ export default async function Home({ params }: Readonly<HomePageProps>) {
         <p className="text-muted-foreground max-w-[600px] mx-auto">
           {dict.home.description}
         </p>
+        <div className="py-2">
+          {lang === "en" ? (
+            <Link className={buttonVariants({ size: "sm" })} href="/fa">
+              به زبان فارسی
+            </Link>
+          ) : (
+            <Link className={buttonVariants({ size: "sm" })} href="/en">
+              I prefare English
+            </Link>
+          )}
+        </div>
       </section>
 
       <div className="lg:flex flex-wrap space-x-4 space-y-4">

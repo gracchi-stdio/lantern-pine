@@ -7,7 +7,7 @@ import { TZDate } from "react-day-picker";
 import { Locale } from "@/lib/settings";
 import { SiteHeader } from "@/components/site-header";
 import { AudioPlayerLayoutWrapper } from "@/components/audio-player";
-
+import Image from "next/image";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -57,13 +57,30 @@ export default async function RootLayout({
             {children}
             {showFooter && (
               <footer className="container mx-auto px-4 py-6 text-center border-t">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground flex justify-center items-center">
                   {dict?.footnote.credit.replace(
                     "{date}",
                     TZDate.tz("Asia/Tehran")
                       .toLocaleString(lang, { year: "numeric" })
                       .split("/")[0],
                   )}
+                  |
+                  <a
+                    href="https://t.me/lanternandpine"
+                    target="_blank"
+                    className="flex items-center"
+                    rel="noopener noreferrer"
+                  >
+                    <Image
+                      className="dark:invert"
+                      src="/telegram.svg"
+                      alt="telegram"
+                      width={25}
+                      height={25}
+                      priority
+                    />
+                    Telegram
+                  </a>
                 </p>
               </footer>
             )}
