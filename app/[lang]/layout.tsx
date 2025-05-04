@@ -59,7 +59,7 @@ export default async function RootLayout({
             {children}
             {showFooter && (
               <footer className="container mx-auto px-4 py-6 text-center border-t">
-                <p className="text-sm text-muted-foreground flex justify-center items-center">
+                <p className="text-sm text-muted-foreground flex flex-col md:flex-row justify-center items-center">
                   {dict?.footnote.credit.replace(
                     "{date}",
                     TZDate.tz("Asia/Tehran")
