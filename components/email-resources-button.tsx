@@ -77,15 +77,14 @@ export default function EmailResourcesButton({
       // The pending state will be handled by useFormStatus in the SubmitButton
       const result = await emailEpisodeResource(link, dict, formData);
 
-      console.log(result);
       if (result?.errors) {
         if (typeof result.errors === "string") {
           setError(result.errors);
-        } else if (result.errors?.email) {
-          // Set error using react-hook-form's setError
+        } else if (result.errors && typeof result.errors === 'object' && 'email' in result.errors && Array.isArray(result.errors.email)) {
+          // Now TypeScript knows result.errors is an object with an email array
           form.setError("email", {
             type: "server",
-            message: result.errors?.email.join(", "),
+            message: result.errors.email.join(", "),
           });
         } else {
           setError(
