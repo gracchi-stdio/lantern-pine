@@ -10,14 +10,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Locale, LOCALES } from "@/lib/settings";
 import { logout } from "@/lib/actions";
 
-const navigationItems = [
-  { name: "Home", href: "/" },
-  // { name: "Features", href: "/features" },
-  // { name: "Pricing", href: "/pricing" },
-  // { name: "About", href: "/about" },
-  // { name: "Contact", href: "/contact" },
-];
-
 interface SiteHeaderProps {
   dict: Awaited<ReturnType<typeof getDictionary>>;
   lang: Locale;
@@ -28,6 +20,7 @@ export function SiteHeader({ dict, lang, isLogged = false }: SiteHeaderProps) {
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
 
+  const navigationItems = [{ name: dict.navigation.home, href: "/" }];
   const hideHeader = LOCALES.map((locale) => [`/${locale}`, `/${locale}/login`])
     .flat()
     .some((path) => pathname === path);

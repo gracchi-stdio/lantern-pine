@@ -1,4 +1,5 @@
 // lib/utils.ts
+import { env } from "@/env.mjs";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -17,6 +18,15 @@ export const settings = {
   },
   logoutRedirect: "/",
   contentRepo: "gracchi-stdio/lantern-pine-content",
+
+  domain: {
+    prod: "lanternandpine.com",
+    dev: "localhost:3000",
+    getCurrent: () =>
+      env.NODE_ENV === "production"
+        ? settings.domain.prod
+        : settings.domain.dev,
+  },
 };
 
 const dictionaries = {
@@ -26,6 +36,8 @@ const dictionaries = {
 
 export const getDictionary = async (locale: "en" | "fa") =>
   dictionaries[locale]();
+
+export type Dictionary = Awaited<ReturnType<typeof getDictionary>>;
 
 export const getLocalizedField = <T extends Record<string, unknown>>(
   obj: T | undefined,

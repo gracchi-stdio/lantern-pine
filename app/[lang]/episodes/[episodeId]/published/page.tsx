@@ -22,9 +22,11 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
     description = "<p></p>";
   }
   return (
-    <div className="container mx-auto max-w-7xl ">
-      <h1>{lang === "en" ? episode.titleEn : episode.titleFa}</h1>
-      <PlayEpisode episode={episode} />
+    <div className="container mx-auto prose">
+      <section className="md:flex justify-between items-center">
+        <h1>{lang === "en" ? episode.titleEn : episode.titleFa}</h1>
+        <PlayEpisode episode={episode} />
+      </section>
       <div
         dangerouslySetInnerHTML={{
           __html: description,

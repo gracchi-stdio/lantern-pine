@@ -37,7 +37,7 @@ export const episodes = sqliteTable("episodes", {
     .notNull(),
   slug: text("slug").unique().notNull(),
   scheduledAt: integer("scheduled_at", { mode: "timestamp" }),
-  contentName: text("content_name").notNull(), // this is the name of md file under repo's episodes folder
+  contentName: text("content_name").notNull(),
   resourcesUrl: text("resources_url"),
   createdAt: integer("created_at", { mode: "timestamp_ms" })
     .default(sql`(unixepoch('subsec') * 1000)`)

@@ -4,7 +4,14 @@
     "published": "Published Episodes",
     "scheduled_time": "Scheduled Time",
     "add_to_calendar": "Add to Calendar",
-    "remind_me": "Remind Me"
+    "remind_me": "Remind Me",
+    "email_resource_title": "Get Resource Link",
+    "email_resource_desc": "Enter your email below, and we'll send you the link.",
+    "email_label": "Email Address",
+    "email_placeholder": "your@email.com",
+    "email_resource_hint": "We'll send the link to this address.",
+    "email_success": "Email sent successfully!",
+    "send_link": "Send Link"
   },
 
   "site_name": "Lantern & Pine",
@@ -21,5 +28,17 @@
   },
   "footnote": {
     "credit": "cc {date} Fanus vs Kaj. All Code Reversed (and Forked)."
+  },
+
+  "navigation": {
+    "home": "Home"
+  },
+
+  "errors": {
+    "invalid_email": "Invalid email address",
+    "generic_error": "An unexpected error occurred. Please try again."
+  },
+  "common": {
+    "loading": "Loading..."
   }
 }

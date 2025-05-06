@@ -1,17 +1,10 @@
 import { notFound } from "next/navigation";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
-
 import { TZDate } from "@date-fns/tz";
 import { getDictionary, getLocalizedField } from "@/lib/utils";
 import { getEpisodeById } from "@/lib/db/queries";
 
 import { CalendarEventButton } from "@/components/calendar-event-button";
+import EmailResourcesButton from "@/components/email-resources-button";
 type Props = {
   params: Promise<{
     lang: "en" | "fa";
@@ -39,49 +32,45 @@ export default async function UpcomingEpisodePage({ params }: Props) {
   ): TZDate | null => (date ? TZDate.tz(tz, date) : null);
 
   return (
-    <div className="container mx-auto px-4 py-8 h-full">
-      <Card className="max-w-3xl mx-auto">
-        <CardHeader>
-          <CardTitle className="text-3xl font-bold">{title}</CardTitle>
-          {descriptionHTML.length > 0 && (
-            <CardDescription className="text-lg">
-              <div dangerouslySetInnerHTML={{ __html: descriptionHTML }}></div>
-            </CardDescription>
-          )}
-        </CardHeader>
+    <article className="container mx-auto px-4 py-8 h-full prose">
+      <h1>{title}</h1>
 
-        <CardContent className="space-y-4">
-          {episode.scheduledAt ? (
-            <div className="flex flex-col gap-2">
-              <h3 className="text-xl font-semibold">
-                {dict.episodes.scheduled_time}
-              </h3>
-              <p className="text-lg">
-                {TZDate.tz("Asia/Tehran", episode.scheduledAt).toLocaleString(
-                  lang,
-                  {
-                    dateStyle: "full",
-                    timeStyle: "short",
-                  },
-                )}{" "}
-                {dict.time.tehran_time}
-              </p>
-            </div>
-          ) : null}
+      {descriptionHTML.length > 0 && (
+        <div dangerouslySetInnerHTML={{ __html: descriptionHTML }}></div>
+      )}
 
-          <div className="flex gap-4 mt-6">
-            <CalendarEventButton
-              title={title}
-              descriptionHTML={descriptionHTML}
-              startDate={localizedDate(episode.scheduledAt)?.toString() || ""}
-            >
-              {dict.episodes.add_to_calendar}
-            </CalendarEventButton>
-
-            {/* <Button variant="secondary">{dict.episodes.remind_me}</Button> */}
+      <section className="space-y-4">
+        {episode.scheduledAt ? (
+          <div className="flex flex-col gap-2">
+            <h3 className="text-xl font-semibold">
+              {dict.episodes.scheduled_time}
+            </h3>
+            <p className="text-lg">
+              {TZDate.tz("Asia/Tehran", episode.scheduledAt).toLocaleString(
+                lang,
+                {
+                  dateStyle: "full",
+                  timeStyle: "short",
+                },
+              )}{" "}
+              {dict.time.tehran_time}
+            </p>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        ) : null}
+      </section>
+      <div className="flex gap-4 mt-6">
+        <CalendarEventButton
+          title={title}
+          descriptionHTML={descriptionHTML}
+          startDate={localizedDate(episode.scheduledAt)?.toString() || ""}
+        >
+          {dict.episodes.add_to_calendar}
+        </CalendarEventButton>
+        <EmailResourcesButton
+          dict={dict}
+          link={episode.resourcesUrl || ""}
+        ></EmailResourcesButton>
+      </div>
+    </article>
   );
 }

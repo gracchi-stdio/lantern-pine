@@ -46,7 +46,7 @@ export default async function RootLayout({
 
   const { user } = await getCurrentSession();
   return (
-    <html lang={lang} dir={dir} suppressHydrationWarning>
+    <html lang={lang} dir={dir}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
