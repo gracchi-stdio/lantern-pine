@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Vazirmatn } from "next/font/google";
 import "../globals.css"; // Adjusted import path relative to [lang]
-import { getDictionary, getLangDir } from "@/lib/utils";
+import { cn, getDictionary, getLangDir } from "@/lib/utils";
 import { getCurrentSession } from "@/lib/db/session";
 import { TZDate } from "react-day-picker";
 import { Locale } from "@/lib/settings";
@@ -20,6 +20,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const vazirmatn = Vazirmatn({
+  variable: "--font-vazirmatn",
+  subsets: ["arabic"],
+});
+
 export const metadata: Metadata = {
   title: "Latern Pine",
   description: "Latern Pine Podcast",
@@ -28,7 +33,7 @@ export const metadata: Metadata = {
 type RootLayoutProps = {
   children: React.ReactNode;
   // params might resolve asynchronously
-  params: { lang: Locale };
+  params: Promise<{ lang: Locale }>;
 };
 
 // Make the function async
@@ -46,7 +51,11 @@ export default async function RootLayout({
 
   const { user } = await getCurrentSession();
   return (
-    <html lang={lang} dir={dir}>
+    <html
+      lang={lang}
+      dir={dir}
+      className={cn(lang === "fa" ? vazirmatn.className : undefined, "dark")}
+    >
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

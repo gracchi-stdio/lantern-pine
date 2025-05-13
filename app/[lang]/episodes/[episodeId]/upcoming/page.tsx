@@ -32,7 +32,7 @@ export default async function UpcomingEpisodePage({ params }: Props) {
   ): TZDate | null => (date ? TZDate.tz(tz, date) : null);
 
   return (
-    <article className="container mx-auto px-4 py-8 h-full prose">
+    <article className="container mx-auto px-4 py-8 h-full prose dark:prose-invert">
       <h1>{title}</h1>
 
       {descriptionHTML.length > 0 && (

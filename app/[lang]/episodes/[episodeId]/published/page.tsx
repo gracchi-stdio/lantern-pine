@@ -22,7 +22,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
     description = "<p></p>";
   }
   return (
-    <div className="container mx-auto prose">
+    <div className="container mx-auto prose dark:prose-invert">
       <section className="md:flex justify-between items-center">
         <h1>{lang === "en" ? episode.titleEn : episode.titleFa}</h1>
         <PlayEpisode episode={episode} />

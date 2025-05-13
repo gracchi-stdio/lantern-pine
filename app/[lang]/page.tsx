@@ -33,7 +33,7 @@ export default async function Home({ params }: Readonly<HomePageProps>) {
     return `/${lang}/episodes/${episode.id}/${episode.status}`;
   };
   return (
-    <main className="container mx-auto px-4 py-8 space-y-12 max-w-7xl">
+    <main className="container mx-auto px-4 py-8 space-y-12 max-w-7xl font-vazirmatn">
       {/* Hero Section */}
       <section className="text-center space-y-4 py-8 flex flex-col">
         <Image
@@ -66,7 +66,7 @@ export default async function Home({ params }: Readonly<HomePageProps>) {
         {upcomingEpisodes.length > 0 && (
           <section className="space-y-4 flex-1">
             <h2 className="text-2xl font-bold">{dict.episodes.upcoming}</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2">
               {upcomingEpisodes.map((episode) => (
                 <Link href={getEpisodeLink(episode)} key={episode.id}>
                   <Card>
@@ -100,7 +100,7 @@ export default async function Home({ params }: Readonly<HomePageProps>) {
         {recentEpisodes.length > 0 && (
           <section className="space-y-4 flex-1">
             <h2 className="text-2xl font-bold">{dict.episodes.published}</h2>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2">
               {recentEpisodes.slice(0, 3).map((episode) => (
                 <Link href={getEpisodeLink(episode)} key={episode.id}>
                   <Card>

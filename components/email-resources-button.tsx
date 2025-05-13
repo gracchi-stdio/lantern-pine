@@ -80,7 +80,12 @@ export default function EmailResourcesButton({
       if (result?.errors) {
         if (typeof result.errors === "string") {
           setError(result.errors);
-        } else if (result.errors && typeof result.errors === 'object' && 'email' in result.errors && Array.isArray(result.errors.email)) {
+        } else if (
+          result.errors &&
+          typeof result.errors === "object" &&
+          "email" in result.errors &&
+          Array.isArray(result.errors.email)
+        ) {
           // Now TypeScript knows result.errors is an object with an email array
           form.setError("email", {
             type: "server",
@@ -111,7 +116,7 @@ export default function EmailResourcesButton({
     // <ResponsiveModal open={open} onOpenChange={setOpen}>
     <ResponsiveModal>
       <ResponsiveModalTrigger asChild>
-        <Button variant="outline">{dict.episodes.remind_me}</Button>
+        <Button variant="outline">{dict.episodes.get_readings}</Button>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent side="top">
         <Form {...form}>

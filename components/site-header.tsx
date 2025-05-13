@@ -27,7 +27,7 @@ export function SiteHeader({ dict, lang, isLogged = false }: SiteHeaderProps) {
   return (
     <>
       {!hideHeader && (
-        <header className="sticky top-0 z-50 w-full border-b bg-background">
+        <header className="sticky top-0 z-50 w-full border-b bg-background px-2">
           <div className="container flex h-16 items-center justify-between max-w-7xl mx-auto">
             <div className="flex items-center gap-2">
               <Link href={`/${lang}`} className="font-bold text-lg">
@@ -62,13 +62,13 @@ export function SiteHeader({ dict, lang, isLogged = false }: SiteHeaderProps) {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[240px] sm:w-[300px]">
-                <div className="flex flex-col gap-4 py-4">
+                <div className="flex flex-col gap-4 py-4 px-4">
                   <Link
                     href="/"
                     className="text-xl font-bold"
                     onClick={() => setOpen(false)}
                   >
-                    Brand
+                    LANTERN and PINE
                   </Link>
                   <nav className="flex flex-col gap-3">
                     {navigationItems.map((item) => (
